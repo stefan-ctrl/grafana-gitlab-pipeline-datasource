@@ -1,21 +1,26 @@
 {
   "type": "datasource",
   "name": "Gitlab Pipelines Datasource",
-  "id": "kalidasya-grafana-gitlab-pipelines-datasource",
+  "id": "kalidasya-gitlabpipelines-datasource",
   "metrics": true,
   "info": {
     "description": "",
     "author": {
       "name": "tkende",
-      "url": ""
+      "url": "https://github.com/kalidasya/"
     },
-    "keywords": [],
+    "keywords": ["gitlab", "pipelines"],
     "logos": {
       "small": "img/logo.svg",
       "large": "img/logo.svg"
     },
     "links": [],
-    "screenshots": [],
+    "screenshots": [
+      {
+        "name": "Datasource config",
+        "path": "img/datasource-config.png"
+      }        
+    ],
     "version": "%VERSION%",
     "updated": "%TODAY%"
   },

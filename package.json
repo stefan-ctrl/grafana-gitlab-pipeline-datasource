@@ -1,5 +1,5 @@
 {
-  "name": "kalidasya-gitlab-pipelines-datasource",
+  "name": "kalidasya-gitlabpipelines-datasource",
   "version": "1.0.0",
   "description": "Plugin for Gitlab Pipeline API",
   "scripts": {

@@ -11,7 +11,7 @@ I had problems with the existing GitlabCI Pipeline dashboards, they displayed to
 
 ## Screenshots
 
-![Datasource config](https://raw.githubusercontent.com/kalidasya/grafana-gitlab-pipeline-datasource/master/docs/datasource-config.png)
+![Datasource config](https://raw.githubusercontent.com/kalidasya/grafana-gitlab-pipeline-datasource/master/src/img/datasource-config.png)
 
 
 
