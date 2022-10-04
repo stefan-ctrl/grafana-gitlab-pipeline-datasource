@@ -1,39 +1,42 @@
 {
-  "$schema": "https://raw.githubusercontent.com/grafana/grafana/master/docs/sources/developers/plugins/plugin.schema.json",
   "type": "datasource",
-  "name": "gitlab-pipeline-status-plugin-2",
-  "id": "kalidasya-gitlab-pipeline-status-plugin-2",
+  "name": "Gitlab Pipelines Datasource",
+  "id": "grafana-gitlab-pipelines-datasource",
   "metrics": true,
   "info": {
-    "description": "Plugin for Gitlab Pipeline API",
+    "description": "",
     "author": {
       "name": "tkende",
       "url": ""
     },
-    "keywords": [
-      "gitlab",
-      "pipelines"
-    ],
+    "keywords": [],
     "logos": {
       "small": "img/logo.svg",
       "large": "img/logo.svg"
     },
-    "links": [
-      {
-        "name": "Website",
-        "url": "https://github.com/grafana/grafana-starter-datasource"
-      },
-      {
-        "name": "License",
-        "url": "https://github.com/grafana/grafana-starter-datasource/blob/master/LICENSE"
-      }
-    ],
+    "links": [],
     "screenshots": [],
     "version": "%VERSION%",
     "updated": "%TODAY%"
   },
   "dependencies": {
-    "grafanaDependency": ">=7.0.0",
+    "grafanaVersion": "6.5.x",
     "plugins": []
-  }
+  },
+  "routes": [
+    {
+      "path": "",
+      "url": "{{.JsonData.url}}",
+      "headers": [
+        {
+          "name": "Authorization",
+          "content": "Bearer {{ .SecureJsonData.privateToken }}"
+        },
+        {
+          "name": "Content-Type",
+          "content": "application/json"
+        }
+      ]
+    }
+  ]
 }

@@ -1,9 +1,13 @@
 import { DataSourcePlugin } from '@grafana/data';
-import { DataSource } from './datasource';
+import { GitlabPipelineDataSource } from './datasource';
 import { ConfigEditor } from './ConfigEditor';
 import { QueryEditor } from './QueryEditor';
-import { MyQuery, MyDataSourceOptions } from './types';
+import { GitlabPipelineQuery, GitlabPipelineDataSourceOptions } from './types';
 
-export const plugin = new DataSourcePlugin<DataSource, MyQuery, MyDataSourceOptions>(DataSource)
+export const plugin = new DataSourcePlugin<
+  GitlabPipelineDataSource,
+  GitlabPipelineQuery,
+  GitlabPipelineDataSourceOptions
+>(GitlabPipelineDataSource)
   .setConfigEditor(ConfigEditor)
   .setQueryEditor(QueryEditor);

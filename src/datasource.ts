@@ -1,4 +1,4 @@
-import defaults from 'lodash/defaults';
+import { ApolloClient, InMemoryCache, NormalizedCacheObject, gql } from '@apollo/client';
 
 import {
   DataQueryRequest,
@@ -7,40 +7,166 @@ import {
   DataSourceInstanceSettings,
   MutableDataFrame,
   FieldType,
+  dateTime,
 } from '@grafana/data';
 
-import { MyQuery, MyDataSourceOptions, defaultQuery } from './types';
+import { GitlabPipelineQuery, GitlabPipelineDataSourceOptions } from './types';
 
-export class DataSource extends DataSourceApi<MyQuery, MyDataSourceOptions> {
-  constructor(instanceSettings: DataSourceInstanceSettings<MyDataSourceOptions>) {
+export class GitlabPipelineDataSource extends DataSourceApi<GitlabPipelineQuery, GitlabPipelineDataSourceOptions> {
+  url: string;
+  client: ApolloClient<NormalizedCacheObject>;
+
+  constructor(instanceSettings: DataSourceInstanceSettings<GitlabPipelineDataSourceOptions>) {
     super(instanceSettings);
+    this.url = instanceSettings.url || 'http://localhost:9099/';
+    this.client = new ApolloClient({
+      uri: this.url,
+      cache: new InMemoryCache(),
+    });
   }
 
-  async query(options: DataQueryRequest<MyQuery>): Promise<DataQueryResponse> {
-    const { range } = options;
-    const from = range!.from.valueOf();
-    const to = range!.to.valueOf();
+  private queryBuilder(refId: string, groupName: string, branchName: string, after?: string) {
+    let afterStr = "";
+    if (typeof after !== 'undefined') {
+      afterStr = `, after: "${after}"`
+    }
+    return `${refId}: group(fullPath: "${groupName}") {
+        projects (first: 100 ${afterStr}) {
+          nodes { 
+            webUrl
+            fullPath
+            pipelines(ref: "${branchName}", first: 1) {
+              nodes {
+                id
+                status
+                finishedAt
+                startedAt
+                updatedAt          
+                stages {
+                  nodes {
+                    name
+                    detailedStatus {
+                      label
+                      detailsPath
+                    }
+                  }
+                }
+              }
+            }
+          }
+          pageInfo {
+            endCursor
+          }
+        }
+      }`;
+  }
 
-    // Return a constant for each query.
-    const data = options.targets.map(target => {
-      const query = defaults(target, defaultQuery);
-      return new MutableDataFrame({
-        refId: query.refId,
+  async query(options: DataQueryRequest<GitlabPipelineQuery>): Promise<DataQueryResponse> {
+    const queries = options.targets
+      .filter((v) => !v.hide)
+      .map(async (item) => {
+        return this.doQuery(item.refId, item.groupName, item.branchName).then(async (response) => {
+          const ret: any = []
+          let data = response 
+          ret.push(...this.filterPipelines(response.data[item.refId].projects.nodes))
+          while (data.data[item.refId].projects.pageInfo.endCursor) {
+            data = await this.doQuery(item.refId, item.groupName, item.branchName, data.data[item.refId].projects.pageInfo.endCursor)
+            if (data.data[item.refId].projects) {
+              ret.push(...this.filterPipelines(data.data[item.refId].projects.nodes))
+            }
+          }
+          return ret;
+        })
+      })
+    return Promise.all(queries).then((data) => { 
+      const frame = new MutableDataFrame({
         fields: [
-          { name: 'Time', values: [from, to], type: FieldType.time },
-          { name: 'Value', values: [query.constant, query.constant], type: FieldType.number },
+          { name: 'Project', type: FieldType.string },
+          { name: 'Id', type: FieldType.string },
+          { name: 'Link', type: FieldType.string },
+          { name: 'Status', type: FieldType.string },
+          { name: 'FinishedAt', type: FieldType.time },
+          { name: 'UpdatedAt', type: FieldType.time },
+          { name: 'StarteddAt', type: FieldType.time },
+          { name: 'Stages', type: FieldType.other },
         ],
       });
-    });
 
-    return { data };
+      data.flat().forEach((project: any) => {
+        const pipeline = project.pipelines.nodes[0];
+        const id = pipeline.id.split('/').pop();
+        frame.appendRow([
+          project.fullPath,
+          id,
+          `${project.webUrl}/pipelines/${id}`,
+          pipeline.status.toLocaleLowerCase(),
+          pipeline.startedAt,
+          pipeline.updatedAt,
+          pipeline.finishedAt,
+          pipeline.stages.nodes.map((stage: any) => {
+            // remove the duplicated group/project
+            const path = stage.detailedStatus.detailsPath.split('/').slice(3).join('/');
+            return [stage.name, stage.detailedStatus.label, `${project.webUrl}/${path}`];
+          }),
+        ]);
+      });
+      return ({ data: [frame] } as DataQueryResponse)
+    })
+  }
+  filterPipelines(response: any): any {
+    return response.filter((v: any) => v.pipelines.nodes.length > 0)
+          .sort(
+            (
+              {
+                pipelines: {
+                  nodes: [current],
+                },
+              }: any,
+              {
+                pipelines: {
+                  nodes: [next],
+                },
+              }: any
+            ) => {
+              const [left, right] =
+                next.startedAt && current.startedAt
+                  ? [current.startedAt, next.startedAt]
+                  : [current.finishedAt, next.finishedAt];
+              return dateTime(right).valueOf() - dateTime(left).valueOf();
+            }
+          )
+  }
+
+  private doQuery(refId: string, groupName: string, branchName: string, after?: string) {
+    return this.client
+      .query({
+        query: gql`
+              query {
+                ${this.queryBuilder(refId, groupName, branchName, after)}
+              }
+            `,
+        fetchPolicy: 'network-only',
+      });
   }
 
   async testDatasource() {
     // Implement a health check for your data source.
-    return {
-      status: 'success',
-      message: 'Success',
-    };
+    return this.client
+      .query({
+        query: gql`
+          query {
+            currentUser {
+              name
+            }
+          }
+        `,
+      })
+      .then((res) => {
+        if (res.data.length === 0) {
+          throw new Error('Match not found.');
+        }
+        return res;
+      });
   }
 }
+

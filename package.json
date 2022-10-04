@@ -1,5 +1,5 @@
 {
-  "name": "kalidasya-gitlab-pipeline-status-plugin-2",
+  "name": "kalidasya-gitlab-pipelines-datasource",
   "version": "1.0.0",
   "description": "Plugin for Gitlab Pipeline API",
   "scripts": {
@@ -13,12 +13,14 @@
   "author": "tkende",
   "license": "Apache-2.0",
   "devDependencies": {
+    "@apollo/client": "^3.7.0",
     "@grafana/data": "latest",
     "@grafana/toolkit": "latest",
     "@grafana/ui": "latest",
-    "@types/lodash": "latest",
     "@testing-library/jest-dom": "5.4.0",
-    "@testing-library/react": "^10.0.2"
+    "@testing-library/react": "^10.0.2",
+    "@types/lodash": "latest",
+    "graphql": "^16.6.0"
   },
   "engines": {
     "node": ">=14"

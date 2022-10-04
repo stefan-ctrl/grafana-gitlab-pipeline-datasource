@@ -3,46 +3,44 @@ import defaults from 'lodash/defaults';
 import React, { ChangeEvent, PureComponent } from 'react';
 import { LegacyForms } from '@grafana/ui';
 import { QueryEditorProps } from '@grafana/data';
-import { DataSource } from './datasource';
-import { defaultQuery, MyDataSourceOptions, MyQuery } from './types';
+import { GitlabPipelineDataSource } from './datasource';
+import { defaultQuery, GitlabPipelineDataSourceOptions, GitlabPipelineQuery } from './types';
 
 const { FormField } = LegacyForms;
 
-type Props = QueryEditorProps<DataSource, MyQuery, MyDataSourceOptions>;
+type Props = QueryEditorProps<GitlabPipelineDataSource, GitlabPipelineQuery, GitlabPipelineDataSourceOptions>;
 
 export class QueryEditor extends PureComponent<Props> {
-  onQueryTextChange = (event: ChangeEvent<HTMLInputElement>) => {
+  onBranchNameChange = (event: ChangeEvent<HTMLInputElement>) => {
     const { onChange, query } = this.props;
-    onChange({ ...query, queryText: event.target.value });
+    onChange({ ...query, branchName: event.target.value });
   };
 
-  onConstantChange = (event: ChangeEvent<HTMLInputElement>) => {
-    const { onChange, query, onRunQuery } = this.props;
-    onChange({ ...query, constant: parseFloat(event.target.value) });
-    // executes the query
-    onRunQuery();
+  onGroupnameChange = (event: ChangeEvent<HTMLInputElement>) => {
+    const { onChange, query } = this.props;
+    onChange({ ...query, groupName: event.target.value });
   };
 
   render() {
-    const query = defaults(this.props.query, defaultQuery);
-    const { queryText, constant } = query;
+    // todo query gitlab to get list of groups (no graphql api)
+    // and list of projects
+    const { groupName, branchName } = defaults(this.props.query, defaultQuery);
 
     return (
       <div className="gf-form">
         <FormField
-          width={4}
-          value={constant}
-          onChange={this.onConstantChange}
-          label="Constant"
-          type="number"
-          step="0.1"
+          labelWidth={20}
+          value={groupName || ''}
+          onChange={this.onGroupnameChange}
+          label="Name of the gitlab group"
+          tooltip="Use * for all groups"
         />
         <FormField
-          labelWidth={8}
-          value={queryText || ''}
-          onChange={this.onQueryTextChange}
-          label="Query Text"
-          tooltip="Not used yet"
+          labelWidth={20}
+          value={branchName || ''}
+          onChange={this.onBranchNameChange}
+          label="Branch name of the pipeline"
+          tooltip="Only piplines with this branch will be displayed"
         />
       </div>
     );

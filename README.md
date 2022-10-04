@@ -1,42 +1,23 @@
-# Grafana Data Source Plugin Template
+# Grafana GitlabCI pipelines datasource plugin
 
-[![Build](https://github.com/grafana/grafana-starter-datasource/workflows/CI/badge.svg)](https://github.com/grafana/grafana-starter-datasource/actions?query=workflow%3A%22CI%22)
+This plugin creates a datasource to gather GitlabCI pipeline status in Grafana.
 
-This template is a starting point for building Grafana Data Source Plugins
+I had problems with the existing GitlabCI Pipeline dashboards, they displayed too many branches for each project, required yet another thing to deploy, so I thought why not do it in Grafana. This is the second (well 3rd) iteration, the visualization is limited, you can create queries with a gitlab group and a branch name. 
 
-## What is Grafana Data Source Plugin?
+## Configuration
 
-Grafana supports a wide range of data sources, including Prometheus, MySQL, and even Datadog. There’s a good chance you can already visualize metrics from the systems you have set up. In some cases, though, you already have an in-house metrics solution that you’d like to add to your Grafana dashboards. Grafana Data Source Plugins enables integrating such solutions with Grafana.
+[Create datasource](https://raw.githubusercontent.com/kalidasya/grafana-gitlab-pipeline-status-plugin/main/docs/img/screenshots/grafana-gitlab-create-datasource.webm)
 
-## Getting started
 
-1. Install dependencies
+## Screenshots
 
-   ```bash
-   yarn install
-   ```
+![Datasource config](https://raw.githubusercontent.com/kalidasya/grafana-gitlab-pipeline-status-plugin/main/docs/img/screenshots/datasource-config.png)
+![Settings page](https://raw.githubusercontent.com/kalidasya/grafana-gitlab-pipeline-status-plugin/main/docs/img/screenshots/settings-page.png)
 
-2. Build plugin in development mode or run in watch mode
 
-   ```bash
-   yarn dev
-   ```
 
-   or
+## Code metrics
 
-   ```bash
-   yarn watch
-   ```
+[![Code Smells](https://sonarcloud.io/api/project_badges/measure?project=kalidasya_grafana-gitlab-pipeline-status-plugin&metric=code_smells)](https://sonarcloud.io/dashboard?id=kalidasya_grafana-gitlab-pipeline-status-plugin)
 
-3. Build plugin in production mode
-
-   ```bash
-   yarn build
-   ```
-
-## Learn more
-
-- [Build a data source plugin tutorial](https://grafana.com/tutorials/build-a-data-source-plugin)
-- [Grafana documentation](https://grafana.com/docs/)
-- [Grafana Tutorials](https://grafana.com/tutorials/) - Grafana Tutorials are step-by-step guides that help you make the most of Grafana
-- [Grafana UI Library](https://developers.grafana.com/ui) - UI components to help you build interfaces using Grafana Design System
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=kalidasya_grafana-gitlab-pipeline-status-plugin&metric=alert_status)](https://sonarcloud.io/dashboard?id=kalidasya_grafana-gitlab-pipeline-status-plugin)
