@@ -6,18 +6,17 @@ I had problems with the existing GitlabCI Pipeline dashboards, they displayed to
 
 ## Configuration
 
-[Create datasource](https://raw.githubusercontent.com/kalidasya/grafana-gitlab-pipeline-status-plugin/main/docs/img/screenshots/grafana-gitlab-create-datasource.webm)
+[Create datasource](https://raw.githubusercontent.com/kalidasya/grafana-gitlab-pipeline-datasource/master/docs/grafana-gitlab-create-datasource.webm)
 
 
 ## Screenshots
 
-![Datasource config](https://raw.githubusercontent.com/kalidasya/grafana-gitlab-pipeline-status-plugin/main/docs/img/screenshots/datasource-config.png)
-![Settings page](https://raw.githubusercontent.com/kalidasya/grafana-gitlab-pipeline-status-plugin/main/docs/img/screenshots/settings-page.png)
+![Datasource config](https://raw.githubusercontent.com/kalidasya/grafana-gitlab-pipeline-datasource/master/docs/datasource-config.png)
 
 
 
 ## Code metrics
 
-[![Code Smells](https://sonarcloud.io/api/project_badges/measure?project=kalidasya_grafana-gitlab-pipeline-status-plugin&metric=code_smells)](https://sonarcloud.io/dashboard?id=kalidasya_grafana-gitlab-pipeline-status-plugin)
+[![Code Smells](https://sonarcloud.io/api/project_badges/measure?project=kalidasya_grafana-gitlab-pipeline-datasource&metric=code_smells)](https://sonarcloud.io/dashboard?id=kalidasya_grafana-gitlab-pipeline-datasource)
 
-[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=kalidasya_grafana-gitlab-pipeline-status-plugin&metric=alert_status)](https://sonarcloud.io/dashboard?id=kalidasya_grafana-gitlab-pipeline-status-plugin)
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=kalidasya_grafana-gitlab-pipeline-datasource&metric=alert_status)](https://sonarcloud.io/dashboard?id=kalidasya_grafana-gitlab-pipeline-datasource)
