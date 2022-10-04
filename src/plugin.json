@@ -1,7 +1,7 @@
 {
   "type": "datasource",
   "name": "Gitlab Pipelines Datasource",
-  "id": "grafana-gitlab-pipelines-datasource",
+  "id": "kalidasya-grafana-gitlab-pipelines-datasource",
   "metrics": true,
   "info": {
     "description": "",
