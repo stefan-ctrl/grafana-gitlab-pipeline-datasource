@@ -3,11 +3,13 @@ import { DataQuery, DataSourceJsonData } from '@grafana/data';
 export interface GitlabPipelineQuery extends DataQuery {
   branchName: string;
   groupName: string;
+  projectFilter?: string;
 }
 
 export const defaultQuery: Partial<GitlabPipelineQuery> = {
   branchName: 'main',
   groupName: '',
+  projectFilter: '',
 };
 
 /**
