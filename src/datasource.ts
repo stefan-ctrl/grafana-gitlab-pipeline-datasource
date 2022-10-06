@@ -75,19 +75,7 @@ export class GitlabPipelineDataSource extends DataSourceApi<GitlabPipelineQuery,
               ret.push(...this.filterPipelines(data.data[item.refId].projects.nodes))
             }
           }
-          const frame = new MutableDataFrame({
-            fields: [
-              { name: 'Project', type: FieldType.string },
-              { name: 'Id', type: FieldType.string },
-              { name: 'Link', type: FieldType.string },
-              { name: 'Status', type: FieldType.string },
-              { name: 'FinishedAt', type: FieldType.time },
-              { name: 'UpdatedAt', type: FieldType.time },
-              { name: 'StarteddAt', type: FieldType.time },
-              { name: 'Stages', type: FieldType.other },
-            ],
-          });
-          frame.refId = item.refId;
+          const frame = this.createDataframe(item.refId)
           ret.forEach((project: any) => {
             const pipeline = project.pipelines.nodes[0];
             const id = pipeline.id.split('/').pop();
@@ -114,6 +102,22 @@ export class GitlabPipelineDataSource extends DataSourceApi<GitlabPipelineQuery,
       return ({ data: frames } as DataQueryResponse)
     })
   }
+  private createDataframe(refId: string) {
+    return new MutableDataFrame({
+      refId: refId,
+      fields: [
+        { name: 'Project', type: FieldType.string },
+        { name: 'Id', type: FieldType.string },
+        { name: 'Link', type: FieldType.string },
+        { name: 'Status', type: FieldType.string },
+        { name: 'FinishedAt', type: FieldType.time },
+        { name: 'UpdatedAt', type: FieldType.time },
+        { name: 'StarteddAt', type: FieldType.time },
+        { name: 'Stages', type: FieldType.other },
+      ],
+    });
+  }
+
   filterPipelines(response: any): any {
     return response.filter((v: any) => v.pipelines.nodes.length > 0)
           .sort(
