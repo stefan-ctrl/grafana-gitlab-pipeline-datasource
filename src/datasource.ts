@@ -63,42 +63,42 @@ export class GitlabPipelineDataSource extends DataSourceApi<GitlabPipelineQuery,
 
   async query(options: DataQueryRequest<GitlabPipelineQuery>): Promise<DataQueryResponse> {
     const queries = options.targets
-      .filter((v) => !v.hide)
-      .map(async (item) => {
-        return this.doQuery(item).then(async (response) => {
-          const ret: any = []
-          let data = response 
-          ret.push(...this.filterPipelines(response.data[item.refId].projects.nodes))
-          while (data.data[item.refId].projects.pageInfo.endCursor) {
-            data = await this.doQuery(item, data.data[item.refId].projects.pageInfo.endCursor)
-            if (data.data[item.refId].projects) {
-              ret.push(...this.filterPipelines(data.data[item.refId].projects.nodes))
+        .filter((v) => !v.hide)
+        .map(async (item) => {
+          return this.doQuery(item).then(async (response) => {
+            const ret: any = []
+            let data = response
+            ret.push(...this.filterPipelines(response.data[item.refId].projects.nodes))
+            while (data.data[item.refId].projects.pageInfo.endCursor) {
+              data = await this.doQuery(item, data.data[item.refId].projects.pageInfo.endCursor)
+              if (data.data[item.refId].projects) {
+                ret.push(...this.filterPipelines(data.data[item.refId].projects.nodes))
+              }
             }
-          }
-          const frame = this.createDataframe(item.refId)
-          ret.forEach((project: any) => {
-            const pipeline = project.pipelines.nodes[0];
-            const id = pipeline.id.split('/').pop();
-            frame.appendRow([
-              project.fullPath,
-              id,
-              `${project.webUrl}/pipelines/${id}`,
-              pipeline.status.toLocaleLowerCase(),
-              pipeline.startedAt,
-              pipeline.updatedAt,
-              pipeline.finishedAt,
-              pipeline.stages.nodes.map((stage: any) => {
-                // remove the duplicated group/project
-                const path = stage.detailedStatus.detailsPath.split('/').slice(3).join('/');
-                return [stage.name, stage.detailedStatus.label, `${project.webUrl}/${path}`];
-              }),
-            ]);
-          });
+            const frame = this.createDataframe(item.refId)
+            ret.forEach((project: any) => {
+              const pipeline = project.pipelines.nodes[0];
+              const id = pipeline.id.split('/').pop();
+              frame.appendRow([
+                project.fullPath,
+                id,
+                `${project.webUrl}/pipelines/${id}`,
+                pipeline.status.toLocaleLowerCase(),
+                pipeline.startedAt,
+                pipeline.updatedAt,
+                pipeline.finishedAt,
+                pipeline.stages.nodes.map((stage: any) => {
+                  // remove the duplicated group/project
+                  const path = stage.detailedStatus.detailsPath.split('/').slice(3).join('/');
+                  return [stage.name, stage.detailedStatus.label, `${project.webUrl}/${path}`];
+                }),
+              ]);
+            });
 
-          return frame;
+            return frame;
+          })
         })
-      })
-    return Promise.all(queries).then((frames) => { 
+    return Promise.all(queries).then((frames) => {
       return ({ data: frames } as DataQueryResponse)
     })
   }
@@ -120,58 +120,58 @@ export class GitlabPipelineDataSource extends DataSourceApi<GitlabPipelineQuery,
 
   filterPipelines(response: any): any {
     return response.filter((v: any) => v.pipelines.nodes.length > 0)
-          .sort(
+        .sort(
             (
-              {
-                pipelines: {
-                  nodes: [current],
-                },
-              }: any,
-              {
-                pipelines: {
-                  nodes: [next],
-                },
-              }: any
+                {
+                  pipelines: {
+                    nodes: [current],
+                  },
+                }: any,
+                {
+                  pipelines: {
+                    nodes: [next],
+                  },
+                }: any
             ) => {
               const [left, right] =
-                next.startedAt && current.startedAt
-                  ? [current.startedAt, next.startedAt]
-                  : [current.finishedAt, next.finishedAt];
+                  next.startedAt && current.startedAt
+                      ? [current.startedAt, next.startedAt]
+                      : [current.finishedAt, next.finishedAt];
               return dateTime(right).valueOf() - dateTime(left).valueOf();
             }
-          )
+        )
   }
 
   private doQuery(query: GitlabPipelineQuery, after?: string) {
     return this.client
-      .query({
-        query: gql`
+        .query({
+          query: gql`
               query {
                 ${this.queryBuilder(query, after)}
               }
             `,
-        fetchPolicy: 'network-only',
-      });
+          fetchPolicy: 'network-only',
+        });
   }
 
   async testDatasource() {
     // Implement a health check for your data source.
     return this.client
-      .query({
-        query: gql`
+        .query({
+          query: gql`
           query {
             currentUser {
               name
             }
           }
         `,
-      })
-      .then((res) => {
-        if (res.data.length === 0) {
-          throw new Error('Match not found.');
-        }
-        return res;
-      });
+        })
+        .then((res) => {
+          if (res.data.length === 0) {
+            throw new Error('Match not found.');
+          }
+          return res;
+        });
   }
 }
 

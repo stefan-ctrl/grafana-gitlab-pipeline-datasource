@@ -1,7 +1,7 @@
 import React, { ChangeEvent, PureComponent } from 'react';
 import { LegacyForms } from '@grafana/ui';
 import { DataSourcePluginOptionsEditorProps } from '@grafana/data';
-import { GitlabPipelineDataSourceOptions, GitlabPipelineDataSourceSecureOptions } from './types';
+import { GitlabPipelineDataSourceOptions, GitlabPipelineDataSourceSecureOptions } from '../types';
 
 const { FormField, SecretFormField } = LegacyForms;
 
@@ -51,30 +51,30 @@ export class ConfigEditor extends PureComponent<Props, State> {
     const secureJsonData = (options.secureJsonData || {}) as GitlabPipelineDataSourceSecureOptions;
 
     return (
-      <div className="gf-form-group">
-        <div className="gf-form">
-          <FormField
-            label="Url"
-            labelWidth={6}
-            inputWidth={20}
-            onChange={this.onURLChange}
-            value={jsonData.url || ''}
-            placeholder="URL of gitlab api"
-          />
+        <div className="gf-form-group">
+          <div className="gf-form">
+            <FormField
+                label="Url"
+                labelWidth={6}
+                inputWidth={20}
+                onChange={this.onURLChange}
+                value={jsonData.url || ''}
+                placeholder="URL of gitlab api"
+            />
+          </div>
+          <div className="gf-form">
+            <SecretFormField
+                label="Private token"
+                labelWidth={6}
+                inputWidth={20}
+                onChange={this.onPrivateTokenChange}
+                value={secureJsonData.privateToken || ''}
+                placeholder="Gitlab private token"
+                onReset={this.onResetPrivateToken}
+                isConfigured={(secureJsonFields && secureJsonFields.privateToken) as boolean}
+            />
+          </div>
         </div>
-        <div className="gf-form">
-          <SecretFormField
-            label="Private token"
-            labelWidth={6}
-            inputWidth={20}
-            onChange={this.onPrivateTokenChange}
-            value={secureJsonData.privateToken || ''}
-            placeholder="Gitlab private token"
-            onReset={this.onResetPrivateToken}
-            isConfigured={(secureJsonFields && secureJsonFields.privateToken) as boolean}
-          />
-        </div>
-      </div>
     );
   }
 }

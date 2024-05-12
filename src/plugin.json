@@ -1,15 +1,15 @@
 {
+  "$schema": "https://raw.githubusercontent.com/grafana/grafana/main/docs/sources/developers/plugins/plugin.schema.json",
   "type": "datasource",
-  "name": "Gitlab Pipelines Datasource",
-  "id": "kalidasya-gitlabpipelines-datasource",
+  "name": "Gitlab-Cicd",
+  "id": "hda-gitlabcicd-datasource",
   "metrics": true,
   "info": {
-    "description": "",
+    "description": "View ressources of gitlab cicd pipelines",
     "author": {
-      "name": "tkende",
-      "url": "https://github.com/kalidasya/"
+      "name": "H da"
     },
-    "keywords": ["gitlab", "pipelines"],
+    "keywords": ["datasource"],
     "logos": {
       "small": "img/logo.svg",
       "large": "img/logo.svg"
@@ -19,13 +19,13 @@
       {
         "name": "Datasource config",
         "path": "img/datasource-config.png"
-      }        
+      }
     ],
     "version": "%VERSION%",
     "updated": "%TODAY%"
   },
   "dependencies": {
-    "grafanaDependency": "9.x.x",
+    "grafanaDependency": ">=10.3.3",
     "plugins": []
   },
   "routes": [
